@@ -2,8 +2,8 @@ name: Daily Run
 
 on:
   schedule:
-    # Runs every day at noon Central Time (approx) in UTC
-    - cron: '0 18 * * *'  # adjust for daylight saving if needed
+    # Runs every day at noon CST
+    - cron: '0 18 * * *'
 
 jobs:
   run-main:
