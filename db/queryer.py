@@ -1,10 +1,12 @@
 import pandas as pd
 
 class DataQueryer:
-    def __init__(self, connection):
+    def __init__(self, connection, schema=None):
         self.conn = connection
+        self.schema = schema
 
     def query_dataframe(self, cols, table_name, filters=[]):
+
         col_string = ", ".join(cols)
 
         where_clause = " AND ".join(filters) if filters else "1=1"

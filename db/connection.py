@@ -6,7 +6,6 @@ class AzureSQLDatabase:
         self,
         server: str,
         database: str,
-        schema: str,
         username: str,
         password: str,
         driver: str = "{ODBC Driver 17 for SQL Server}",
@@ -16,7 +15,6 @@ class AzureSQLDatabase:
     ):
         self.server = server
         self.database = database
-        self.schema = schema
         self.username = username
         self.password = password
         self.driver = driver
@@ -29,7 +27,6 @@ class AzureSQLDatabase:
             f"DRIVER={self.driver};"
             f"SERVER={self.server},1433;"
             f"DATABASE={self.database};"
-            f"SCHEMA={self.schema};"
             f"UID={self.username};"
             f"PWD={self.password};"
             f"Encrypt={self.encrypt};"

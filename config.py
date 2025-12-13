@@ -9,10 +9,14 @@ API_KEY = os.getenv("OPENWEATHER_API_KEY")
 DB_CONFIG = {
     "server": os.getenv("AZURE_SQL_SERVER"),
     "database": os.getenv("AZURE_SQL_DATABASE"),
-    "schema": os.getenv("AZURE_SQL_SCHEMA"),
     "username": os.getenv("AZURE_SQL_USER"),
-    "password": os.getenv("AZURE_SQL_PASSWORD")
+    "password": os.getenv("AZURE_SQL_PASSWORD"),
+    "encrypt": os.getenv("AZURE_SQL_ENCRYPT", "yes"),
+    "trust_server_certificate": os.getenv("AZURE_SQL_TRUST_SERVER_CERTIFICATE", "no"),
+    "timeout": int(os.getenv("AZURE_SQL_TIMEOUT", "30")),
 }
+
+DB_SCHEMA = os.getenv("AZURE_SQL_SCHEMA")
 
 SMTP_CONFIG = {
     "smtp_server": "smtp.gmail.com",

@@ -7,8 +7,6 @@ class DataInserter:
         self.schema = schema
 
     def insert_dataframe(self, df, table_name):
-        # If schema is provided, prepend to table_name
-        full_table_name = f"{self.schema}.{table_name}" if self.schema else table_name
 
         # Get a raw DBAPI connection from SQLAlchemy
         with self.engine.begin() as conn:
@@ -17,7 +15,7 @@ class DataInserter:
 
             cols = df.columns.tolist()
             placeholders = ', '.join(['?']*len(cols))
-            query = f"INSERT INTO {full_table_name} ({','.join(cols)}) VALUES ({placeholders})"
+            query = f"INSERT INTO {table_name} ({','.join(cols)}) VALUES ({placeholders})"
 
             for _, row in df.iterrows():
                 values = tuple(None if (isinstance(x, float) and math.isnan(x)) else x for x in row)

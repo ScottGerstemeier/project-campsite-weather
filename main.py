@@ -1,5 +1,5 @@
 def main():
-    from config import API_KEY, DB_CONFIG, SMTP_CONFIG
+    from config import API_KEY, DB_CONFIG, DB_SCHEMA, SMTP_CONFIG
     import pandas as pd
     from db.connection import AzureSQLDatabase
     from db.inserter import DataInserter
@@ -11,10 +11,10 @@ def main():
 
     # DB connection
     conn = AzureSQLDatabase(**DB_CONFIG).connect()
-    inserter = DataInserter(conn)
-    queryer = DataQueryer(conn)
+    inserter = DataInserter(conn, DB_SCHEMA)
+    queryer = DataQueryer(conn, DB_SCHEMA)
 
-    def fetch_and_insert_weather(conn, fetcher, parser, inserter, places_df, db_name, schema):
+    def fetch_and_insert_weather(fetcher, parser, inserter, places_df, db_name, schema):
         for _, row in places_df.iterrows():
             place_id, lat, lon, tz = row["id"], row["latitude"], row["longitude"], row["timezone_name"]
             print(f"Processing {place_id}: lat={lat}, lon={lon}, tz={tz}")
@@ -54,23 +54,23 @@ def main():
     parser = WeatherParser()
     places_df = queryer.query_dataframe(
         cols=["id", "place_name", "latitude", "longitude", "timezone_name"]
-        ,table_name=f"{DB_CONFIG['database']}.{DB_CONFIG['schema']}.places"
+        ,table_name=f"{DB_CONFIG['database']}.{DB_SCHEMA}.places"
         ,filters=["is_include = 1"]
     )
-    fetch_and_insert_weather(conn, fetcher, parser, inserter, places_df, DB_CONFIG['database'], DB_CONFIG['schema'])
+    fetch_and_insert_weather(fetcher, parser, inserter, places_df, DB_CONFIG['database'], DB_SCHEMA)
 
     # Emails
     people_df = queryer.query_dataframe(
         cols=["email", "first_name", "last_name"]
-        ,table_name=f"{DB_CONFIG['database']}.{DB_CONFIG['schema']}.emails"
+        ,table_name=f"{DB_CONFIG['database']}.{DB_SCHEMA}.emails"
         ,filters=["is_include = 1"]
     )
     camp_dates_df = queryer.query_dataframe(
         cols=["camp_start_datetime", "camp_end_datetime"]
-        ,table_name=f"{DB_CONFIG['database']}.{DB_CONFIG['schema']}.camp_dates"
+        ,table_name=f"{DB_CONFIG['database']}.{DB_SCHEMA}.camp_dates"
     )
 
-    builder = MessageBuilder(queryer=queryer, db_name=DB_CONFIG['database'], schema=DB_CONFIG['schema'], places_df=places_df)
+    builder = MessageBuilder(queryer=queryer, db_name=DB_CONFIG['database'], schema=DB_SCHEMA, places_df=places_df)
     sender = EmailSender(**SMTP_CONFIG)
 
     send_emails(sender, builder, people_df, camp_dates_df)
