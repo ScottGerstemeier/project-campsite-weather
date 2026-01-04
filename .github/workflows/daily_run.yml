@@ -4,6 +4,7 @@ on:
   schedule:
     # Runs every day at noon CST
     - cron: '0 18 * * *'
+  workflow_dispatch:
 
 jobs:
   run-main:
