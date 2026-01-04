@@ -2,7 +2,7 @@ name: Daily Run
 
 on:
   schedule:
-    # Runs every day at noon CST (18:00 UTC; adjust for DST manually)
+    # Runs every day at noon CST
     - cron: '0 18 * * *'
 
 jobs:
