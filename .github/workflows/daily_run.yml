@@ -1,9 +1,9 @@
 name: Daily Run
 
 on:
-  schedule:
+  # schedule:
     # Runs every day at noon CST
-    - cron: '0 18 * * *'
+    # - cron: '0 18 * * *'
   workflow_dispatch:
 
 jobs:
