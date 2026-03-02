@@ -2,7 +2,11 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+# Azure automatically sets WEBSITE_INSTANCE_ID.
+# So this permits local testing and guards against Azure trying to call something it doesn't have.
+if os.getenv("WEBSITE_INSTANCE_ID") is None:
+    from dotenv import load_dotenv
+    load_dotenv()
 
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
