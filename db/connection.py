@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 import urllib.parse
+import time
 
 class AzureSQLDatabase:
     def __init__(
@@ -11,7 +12,7 @@ class AzureSQLDatabase:
         driver: str = "{ODBC Driver 18 for SQL Server}",
         encrypt: str = "yes",
         trust_server_certificate: str = "no",
-        timeout: int = 30,
+        timeout: int = 120,
     ):
         self.server = server
         self.database = database
@@ -22,7 +23,8 @@ class AzureSQLDatabase:
         self.trust_server_certificate = trust_server_certificate
         self.timeout = timeout
 
-    def connect(self):
+    def connect(self, retries: int = 3, delay: int = 20):
+
         params = urllib.parse.quote_plus(
             f"DRIVER={self.driver};"
             f"SERVER={self.server};"
@@ -34,7 +36,16 @@ class AzureSQLDatabase:
             f"Connection Timeout={self.timeout};"
         )
 
-        return create_engine(
+        engine = create_engine(
             f"mssql+pyodbc:///?odbc_connect={params}",
             pool_pre_ping=True,
         )
+
+        for i in range(retries):
+            try:
+                with engine.connect():
+                    return engine
+            except Exception:
+                if i == retries - 1:
+                    raise
+                time.sleep(delay)
